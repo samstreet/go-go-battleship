@@ -1,8 +1,11 @@
 package main
 
 import (
+	"./src/session"
+	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	"log"
+	"net/http"
+	"os"
 )
 
 func init() {
@@ -12,5 +15,7 @@ func init() {
 }
 
 func main() {
-	log.Println("Welcome to go go battleships")
+	r := mux.NewRouter()
+	r.HandleFunc(os.Getenv("API_VERSION")+"/battleships/game", session.CreateSessionHandler)
+	http.Handle("/", r)
 }
