@@ -4,6 +4,8 @@ import (
 	"./src/session"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	"github.com/rs/cors"
+	"log"
 	"net/http"
 	"os"
 )
@@ -15,7 +17,13 @@ func init() {
 }
 
 func main() {
-	r := mux.NewRouter()
-	r.HandleFunc(os.Getenv("API_VERSION")+"/battleships/game", session.CreateSessionHandler)
-	http.Handle("/", r)
+	router := mux.NewRouter()
+
+	sessionRouter := router.PathPrefix("/session").Subrouter()
+	sessionRouter.HandleFunc("", session.CreateSessionHandler).Methods(http.MethodOptions, http.MethodPost)
+	sessionRouter.HandleFunc("/join/{session}", session.JoinSessionHandler).Methods(http.MethodOptions, http.MethodPut)
+	sessionRouter.HandleFunc("/{session}", session.ViewSessionHandler).Methods(http.MethodOptions, http.MethodGet)
+	handler := cors.Default().Handler(router)
+
+	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), handler))
 }
