@@ -9,11 +9,15 @@ GOGET=$(GOCMD) get
 all: clean build
 
 build:
-	$(GOBUILD) -o $(BINARY_NAME)
+	$(GOBUILD) -o "$(BINARY_DIR)/$(BINARY_NAME)"
+
 clean:
 	$(GOCLEAN)
-	rm -rf bin/
+	rm -rf $(BINARY_DIR)/
+
 deps:
 	$(GOGET) github.com/gorilla/mux
 	$(GOGET) github.com/jinzhu/gorm
 	$(GOGET) github.com/joho/godotenv
+	$(GOGET) github.com/rs/cors
+	$(GOGET) github.com/satori/go.uuid
