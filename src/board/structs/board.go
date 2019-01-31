@@ -2,7 +2,6 @@ package structs
 
 import "github.com/satori/go.uuid"
 
-type SessionOutDTO struct {
+type BoardOutDTO struct {
 	UUID uuid.UUID
-	Board uuid.UUID
 }

@@ -21,7 +21,7 @@ func CreateSessionHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	session := structs.OutDTO{UUID:id, Board:boardId}
+	session := structs.SessionOutDTO{UUID:id, Board:boardId}
 
 	w.Header().Set("Content-Type", "application/json")
 	b, err := json.Marshal(session)
