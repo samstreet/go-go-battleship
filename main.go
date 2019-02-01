@@ -2,7 +2,11 @@ package main
 
 import (
 	"./src/board"
+	BoardModels "./src/board/model"
+	"./src/core/dbal"
+	"./src/core/helpers"
 	"./src/session"
+	SessionModels"./src/session/model"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/rs/cors"
@@ -12,9 +16,10 @@ import (
 )
 
 func init() {
-	if err := godotenv.Load(); err != nil {
-		panic(err)
-	}
+	err := godotenv.Load()
+	helpers.HandleError(err)
+	dbal.InitialiseConnection().AutoMigrate(&BoardModels.BoardModel{})
+	dbal.InitialiseConnection().AutoMigrate(&SessionModels.SessionModel{})
 }
 
 func main() {

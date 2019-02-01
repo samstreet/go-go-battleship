@@ -1,9 +1,10 @@
 package session
 
 import (
+	BoardStructs "../board/structs"
+	"../core/helpers"
 	"./structs"
 	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 	"log"
@@ -12,23 +13,17 @@ import (
 
 func CreateSessionHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.NewV4()
-	if err != nil {
-		log.Fatal(err)
-	}
+	helpers.HandleError(err)
 
 	boardId, err := uuid.NewV4()
-	if err != nil {
-		log.Fatal(err)
-	}
+	helpers.HandleError(err)
 
-	session := structs.SessionOutDTO{UUID:id, Board:boardId}
+	board := BoardStructs.BoardOutDTO{UUID:boardId}
+	session := structs.SessionOutDTO{UUID:id, Board: board}
 
 	w.Header().Set("Content-Type", "application/json")
 	b, err := json.Marshal(session)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	helpers.HandleError(err)
 
 	w.Write(b)
 	w.WriteHeader(http.StatusOK)
