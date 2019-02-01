@@ -4,9 +4,12 @@ import (
 	"../board/structs"
 	"encoding/json"
 	"fmt"
+	"github.com/jinzhu/gorm"
 	"github.com/satori/go.uuid"
 	"log"
 	"net/http"
+	"../core/dbal"
+	"../board/model"
 )
 
 func CreateBoardHandler(w http.ResponseWriter, r *http.Request) {
@@ -15,7 +18,13 @@ func CreateBoardHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	session := structs.BoardOutDTO{UUID:id}
+	var DB *gorm.DB = dbal.InitialiseConnection()
+	DB.Create(&model.BoardModel{UUID:id})
+
+	var boardModel model.BoardModel
+	DB.First(&boardModel, 1)
+
+	session := structs.BoardOutDTO{UUID: boardModel.UUID}
 
 	w.Header().Set("Content-Type", "application/json")
 	b, err := json.Marshal(session)
