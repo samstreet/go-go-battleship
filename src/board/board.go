@@ -6,25 +6,19 @@ import (
 	"../core/dbal"
 	"encoding/json"
 	"fmt"
-	"github.com/jinzhu/gorm"
 	"github.com/satori/go.uuid"
 	"log"
 	"net/http"
 )
 
 func CreateBoardHandler(w http.ResponseWriter, r *http.Request) {
-	id, err := uuid.NewV4()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var DB *gorm.DB = dbal.InitialiseConnection()
-	DB.Create(&model.BoardModel{UUID: id})
+	var DB = dbal.InitialiseConnection()
+	DB.Create(&model.BoardModel{})
 
 	var boardModel model.BoardModel
 	DB.First(&boardModel, 1)
 
-	session := structs.BoardOutDTO{UUID: boardModel.UUID}
+	session := structs.BoardOutDTO{UUID: uuid.FromStringOrNil(boardModel.ID)}
 
 	w.Header().Set("Content-Type", "application/json")
 	b, err := json.Marshal(session)

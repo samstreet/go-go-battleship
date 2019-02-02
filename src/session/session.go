@@ -9,20 +9,19 @@ import (
 	"github.com/satori/go.uuid"
 	"log"
 	"net/http"
+	"../session/services"
 )
 
 func CreateSessionHandler(w http.ResponseWriter, r *http.Request) {
-	id, err := uuid.NewV4()
-	helpers.HandleError(err)
+	sessionService := services.NewSessionService()
 
-	boardId, err := uuid.NewV4()
-	helpers.HandleError(err)
+	session := sessionService.CreateSession()
+	board := BoardStructs.BoardOutDTO{UUID:uuid.FromStringOrNil(session.Board.ID)}
 
-	board := BoardStructs.BoardOutDTO{UUID:boardId}
-	session := structs.SessionOutDTO{UUID:id, Board: board}
+	sessionOut := structs.SessionOutDTO{UUID:uuid.FromStringOrNil(session.ID), Board: board}
 
 	w.Header().Set("Content-Type", "application/json")
-	b, err := json.Marshal(session)
+	b, err := json.Marshal(sessionOut)
 	helpers.HandleError(err)
 
 	w.Write(b)
