@@ -2,6 +2,7 @@ package model
 
 import (
 	"../../board/model"
+	"../../core/dbal"
 	"../../core/helpers"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -10,15 +11,20 @@ import (
 )
 
 type SessionModel struct {
-	ID string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	Board     model.BoardModel
-	BoardID string
+	ID         string
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	Board      model.BoardModel `gorm:"foreignkey:BoardID"`
+	BoardID    string
+	Connection *gorm.DB
 }
 
-func NewSessionModel() *SessionModel {
-	return &SessionModel{}
+func (session *SessionModel) NewSessionModel() *SessionModel {
+	return &SessionModel{Connection: dbal.InitialiseConnection()}
+}
+
+func (session *SessionModel) Fresh() *SessionModel {
+	return session.NewSessionModel()
 }
 
 func (session *SessionModel) BeforeCreate(scope *gorm.Scope) error {

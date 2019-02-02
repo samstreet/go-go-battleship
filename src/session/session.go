@@ -14,10 +14,9 @@ import (
 
 func CreateSessionHandler(w http.ResponseWriter, r *http.Request) {
 	sessionService := services.NewSessionService()
-
 	session := sessionService.CreateSession()
-	board := BoardStructs.BoardOutDTO{UUID:uuid.FromStringOrNil(session.Board.ID)}
 
+	board := BoardStructs.BoardOutDTO{UUID:uuid.FromStringOrNil(session.Board.ID)}
 	sessionOut := structs.SessionOutDTO{UUID:uuid.FromStringOrNil(session.ID), Board: board}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -41,7 +40,14 @@ func JoinSessionHandler(w http.ResponseWriter, r *http.Request) {
 
 func ViewSessionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+
+	sessionService := services.NewSessionService()
+	sessionOut := sessionService.FindSessionByUUID(vars["session"])
+
+	b, err := json.Marshal(sessionOut)
+	helpers.HandleError(err)
+
 	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte("{\"uuid\": \"" + vars["session"] + "\"}"))
+	w.Write(b)
 	w.WriteHeader(http.StatusOK)
 }

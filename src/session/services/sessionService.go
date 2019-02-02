@@ -2,8 +2,11 @@ package services
 
 import (
 	BoardModels "../../board/model"
+	BoardDTO "../../board/structs"
 	"../../core/dbal"
 	"../model"
+	"../structs"
+	u "github.com/satori/go.uuid"
 )
 
 type SessionService struct {
@@ -11,20 +14,37 @@ type SessionService struct {
 }
 
 func NewSessionService() *SessionService {
+	m := model.SessionModel{}
+
 	return &SessionService{
-		Model: *model.NewSessionModel(),
+		Model: *m.Fresh(),
 	}
 }
 
-func (service SessionService) CreateSession() model.SessionModel {
+func (service SessionService) CreateSession() *model.SessionModel {
+	db := dbal.InitialiseConnection()
 
 	board := BoardModels.BoardModel{}
-	dbal.InitialiseConnection().Create(&board)
+	db.Create(&board)
 
-	session := model.SessionModel{Board:board}
-	dbal.InitialiseConnection().Create(&session)
+	session := service.Model.Fresh()
+	session.Board = board
 
-	dbal.InitialiseConnection().Model(&session).Related(&board)
+	db.Create(&session)
 
 	return session
+}
+
+func (service SessionService) FindSessionByUUID(uuid string) structs.SessionOutDTO {
+	sessionOutDTO := structs.SessionOutDTO{}
+	boardOutDTO := BoardDTO.BoardOutDTO{}
+	tmp := service.Model.Fresh()
+
+	service.Model.Connection.Where("id = ?", uuid).First(&tmp)
+
+	boardOutDTO.UUID = u.FromStringOrNil(tmp.BoardID)
+
+	sessionOutDTO.UUID = u.FromStringOrNil(tmp.ID)
+	sessionOutDTO.Board = boardOutDTO
+	return sessionOutDTO
 }
