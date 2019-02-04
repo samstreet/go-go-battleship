@@ -3,6 +3,7 @@ package session
 import (
 	"../core/helpers"
 	"../session/services"
+	SessionDTO "../session/structs"
 	"encoding/json"
 	"encoding/xml"
 	"github.com/gorilla/mux"
@@ -36,24 +37,25 @@ func JoinSessionHandler(w http.ResponseWriter, r *http.Request) {
 
 func ViewSessionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-
 	sessionService := services.NewSessionService()
 	sessionOut := sessionService.FindSessionByUUID(vars["session"])
+	w.Header().Set("Content-Type", r.Header.Get("Accept"))
+	w.Write(transformDTOToSchema(sessionOut, r.Header.Get("Accept")))
+	w.WriteHeader(http.StatusOK)
+	return
+}
 
-	if r.Header.Get("Accept") == "application/json" {
-		b, err := json.Marshal(sessionOut)
+func transformDTOToSchema(dto SessionDTO.SessionOutDTO, output string) []byte {
+	if output == "application/json" {
+		b, err := json.Marshal(dto)
 		helpers.HandleError(err)
-
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(b)
-		w.WriteHeader(http.StatusOK)
-	} else {
-		b, err := xml.MarshalIndent(sessionOut, "  ", "    ")
-		helpers.HandleError(err)
-		w.Header().Set("Content-Type", "application/xml")
-		w.Write([]byte("<?xml version=\"1.0\" ?>"))
-		w.Write(b)
-		w.WriteHeader(http.StatusOK)
+		return b
 	}
 
+	b, err := xml.MarshalIndent(dto, "  ", "    ")
+	log.Print(b)
+	helpers.HandleError(err)
+
+	// todo prepend the xml version
+	return b
 }
