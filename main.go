@@ -25,7 +25,7 @@ func init() {
 
 func main() {
 	router := mux.NewRouter()
-	router.Use(middleware.RateLimit)
+	router.Use(middleware.RateLimit, middleware.AcceptableContentTypes)
 
 	sessionRouter := router.PathPrefix("/session").Subrouter()
 	sessionRouter.HandleFunc("", session.CreateSessionHandler).Methods(http.MethodOptions, http.MethodPost)

@@ -4,6 +4,7 @@ import (
 	"../core/helpers"
 	"../session/services"
 	"encoding/json"
+	"encoding/xml"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 	"log"
@@ -39,10 +40,20 @@ func ViewSessionHandler(w http.ResponseWriter, r *http.Request) {
 	sessionService := services.NewSessionService()
 	sessionOut := sessionService.FindSessionByUUID(vars["session"])
 
-	b, err := json.Marshal(sessionOut)
-	helpers.HandleError(err)
+	if r.Header.Get("Accept") == "application/json" {
+		b, err := json.Marshal(sessionOut)
+		helpers.HandleError(err)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(b)
-	w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(b)
+		w.WriteHeader(http.StatusOK)
+	} else {
+		b, err := xml.MarshalIndent(sessionOut, "  ", "    ")
+		helpers.HandleError(err)
+		w.Header().Set("Content-Type", "application/xml")
+		w.Write([]byte("<?xml version=\"1.0\" ?>"))
+		w.Write(b)
+		w.WriteHeader(http.StatusOK)
+	}
+
 }
