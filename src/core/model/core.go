@@ -16,5 +16,5 @@ type User struct {
 	UpdatedAt  time.Time
 	Session    SessionModels.SessionModel `gorm:"foreignkey:SessionID"`
 	SessionID  string
-	Connection *gorm.DB
+	Model
 }

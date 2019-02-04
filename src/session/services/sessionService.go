@@ -5,7 +5,7 @@ import (
 	BoardDTO "../../board/structs"
 	"../../core/dbal"
 	"../model"
-	"../structs"
+	SessionDTO"../structs"
 	u "github.com/satori/go.uuid"
 )
 
@@ -21,7 +21,7 @@ func NewSessionService() *SessionService {
 	}
 }
 
-func (service SessionService) CreateSession() *model.SessionModel {
+func (service SessionService) CreateSession() SessionDTO.SessionOutDTO {
 	db := dbal.InitialiseConnection()
 
 	board := BoardModels.BoardModel{}
@@ -32,11 +32,17 @@ func (service SessionService) CreateSession() *model.SessionModel {
 
 	db.Create(&session)
 
-	return session
+	sessionOutDTO := SessionDTO.SessionOutDTO{}
+	boardDTO := BoardDTO.BoardOutDTO{UUID: u.FromStringOrNil(session.Board.ID)}
+
+	sessionOutDTO.Board = boardDTO
+	sessionOutDTO.UUID = u.FromStringOrNil(session.ID)
+
+	return sessionOutDTO
 }
 
-func (service SessionService) FindSessionByUUID(uuid string) structs.SessionOutDTO {
-	sessionOutDTO := structs.SessionOutDTO{}
+func (service SessionService) FindSessionByUUID(uuid string) SessionDTO.SessionOutDTO {
+	sessionOutDTO := SessionDTO.SessionOutDTO{}
 	boardOutDTO := BoardDTO.BoardOutDTO{}
 	tmp := service.Model.Fresh()
 

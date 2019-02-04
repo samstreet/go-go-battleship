@@ -1,26 +1,21 @@
 package session
 
 import (
-	BoardStructs "../board/structs"
 	"../core/helpers"
-	"./structs"
+	"../session/services"
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 	"log"
 	"net/http"
-	"../session/services"
 )
 
 func CreateSessionHandler(w http.ResponseWriter, r *http.Request) {
 	sessionService := services.NewSessionService()
 	session := sessionService.CreateSession()
 
-	board := BoardStructs.BoardOutDTO{UUID:uuid.FromStringOrNil(session.Board.ID)}
-	sessionOut := structs.SessionOutDTO{UUID:uuid.FromStringOrNil(session.ID), Board: board}
-
 	w.Header().Set("Content-Type", "application/json")
-	b, err := json.Marshal(sessionOut)
+	b, err := json.Marshal(session)
 	helpers.HandleError(err)
 
 	w.Write(b)
