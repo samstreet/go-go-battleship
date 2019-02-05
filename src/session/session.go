@@ -7,32 +7,21 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"github.com/gorilla/mux"
-	"github.com/satori/go.uuid"
-	"log"
 	"net/http"
 )
 
 func CreateSessionHandler(w http.ResponseWriter, r *http.Request) {
 	sessionService := services.NewSessionService()
 	session := sessionService.CreateSession()
-
-	w.Header().Set("Content-Type", "application/json")
-	b, err := json.Marshal(session)
-	helpers.HandleError(err)
-
-	w.Write(b)
+	w.Header().Set("Content-Type", r.Header.Get("Accept"))
+	w.Write(transformDTOToSchema(session, r.Header.Get("Accept")))
 	w.WriteHeader(http.StatusOK)
 }
 
 func JoinSessionHandler(w http.ResponseWriter, r *http.Request) {
-	id, err := uuid.NewV4()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte("{\"uuid\": \"" + id.String() + "\"}"))
-	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", r.Header.Get("Accept"))
+	// todo - build out the logic for joining sessions
+	w.WriteHeader(http.StatusAccepted)
 }
 
 func ViewSessionHandler(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +31,6 @@ func ViewSessionHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", r.Header.Get("Accept"))
 	w.Write(transformDTOToSchema(sessionOut, r.Header.Get("Accept")))
 	w.WriteHeader(http.StatusOK)
-	return
 }
 
 func transformDTOToSchema(dto SessionDTO.SessionOutDTO, output string) []byte {

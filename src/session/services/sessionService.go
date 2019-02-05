@@ -25,6 +25,8 @@ func (service SessionService) CreateSession() SessionDTO.SessionOutDTO {
 	db := dbal.InitialiseConnection()
 
 	board := BoardModels.BoardModel{}
+	board.XLength = 10
+	board.YLength = board.XLength
 	db.Create(&board)
 
 	session := service.Model.Fresh()
@@ -33,24 +35,25 @@ func (service SessionService) CreateSession() SessionDTO.SessionOutDTO {
 	db.Create(&session)
 
 	sessionOutDTO := SessionDTO.SessionOutDTO{}
-	boardDTO := BoardDTO.BoardOutDTO{UUID: u.FromStringOrNil(session.Board.ID)}
+	boardOutDTO := BoardDTO.BoardOutDTO{UUID: u.FromStringOrNil(session.Board.ID)}
+	boardOutDTO.XLength = board.XLength
+	boardOutDTO.YLength = board.YLength
 
-	sessionOutDTO.Board = boardDTO
+	sessionOutDTO.Board = boardOutDTO
 	sessionOutDTO.UUID = u.FromStringOrNil(session.ID)
 
 	return sessionOutDTO
 }
 
 func (service SessionService) FindSessionByUUID(uuid string) SessionDTO.SessionOutDTO {
-	sessionOutDTO := SessionDTO.SessionOutDTO{}
 	boardOutDTO := BoardDTO.BoardOutDTO{}
 	tmp := service.Model.Fresh()
 
-	service.Model.Connection.Where("id = ?", uuid).First(&tmp)
+	service.Model.Connection.Preload("Board").Where("id = ?", uuid).First(&tmp)
 
-	boardOutDTO.UUID = u.FromStringOrNil(tmp.BoardID)
+	boardOutDTO.UUID = u.FromStringOrNil(tmp.Board.ID)
+	boardOutDTO.XLength = tmp.Board.XLength
+	boardOutDTO.YLength = tmp.Board.YLength
 
-	sessionOutDTO.UUID = u.FromStringOrNil(tmp.ID)
-	sessionOutDTO.Board = boardOutDTO
-	return sessionOutDTO
+	return SessionDTO.SessionOutDTO{UUID: u.FromStringOrNil(tmp.ID), Board: boardOutDTO}
 }
