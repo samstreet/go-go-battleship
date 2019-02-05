@@ -53,9 +53,7 @@ func transformDTOToSchema(dto SessionDTO.SessionOutDTO, output string) []byte {
 	}
 
 	b, err := xml.MarshalIndent(dto, "  ", "    ")
-	log.Print(b)
 	helpers.HandleError(err)
 
-	// todo prepend the xml version
-	return b
+	return []byte(xml.Header + string(b))
 }

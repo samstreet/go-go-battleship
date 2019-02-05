@@ -5,7 +5,7 @@ import (
 	BoardDTO "../../board/structs"
 	"../../core/dbal"
 	"../model"
-	SessionDTO"../structs"
+	SessionDTO "../structs"
 	u "github.com/satori/go.uuid"
 )
 

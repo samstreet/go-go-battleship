@@ -6,7 +6,7 @@ import (
 )
 
 func InitialiseConnection() *gorm.DB {
-	DB, error := gorm.Open("sqlite3", "test.db")
-	helpers.HandleError(error)
+	DB, err := gorm.Open("sqlite3", "test.db")
+	helpers.HandleError(err)
 	return DB
 }

@@ -9,7 +9,7 @@ import (
 )
 
 type BoardModel struct {
-	ID string
+	ID        string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt *time.Time `sql:"index"`

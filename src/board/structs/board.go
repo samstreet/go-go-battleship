@@ -6,6 +6,6 @@ import (
 )
 
 type BoardOutDTO struct {
-	XMLName xml.Name `xml:"Board" json:"-"`
-	UUID uuid.UUID `xml:"UUID"`
+	XMLName xml.Name  `xml:"Board" json:"-"`
+	UUID    uuid.UUID `xml:"UUID" json:"uuid"`
 }

@@ -11,10 +11,10 @@ type Model struct {
 }
 
 type User struct {
-	ID         string
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
-	Session    SessionModels.SessionModel `gorm:"foreignkey:SessionID"`
-	SessionID  string
+	ID        string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Session   SessionModels.SessionModel `gorm:"foreignkey:SessionID"`
+	SessionID string
 	Model
 }
