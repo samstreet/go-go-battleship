@@ -1,7 +1,15 @@
 package structs
 
-import "github.com/satori/go.uuid"
+import (
+	"../../core/structs"
+	"encoding/xml"
+	"github.com/satori/go.uuid"
+)
 
 type BoardOutDTO struct {
-	UUID uuid.UUID
+	XMLName xml.Name             `xml:"Board" json:"-"`
+	UUID    uuid.UUID            `xml:"UUID" json:"uuid"`
+	XLength int                  `xml:"XLength" json:"xLength"`
+	YLength int                  `xml:"YLength" json:"yLength"`
+	Players []structs.UserOutDTO `xml:"Players>Player" json:"players"`
 }

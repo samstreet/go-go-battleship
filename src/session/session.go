@@ -1,53 +1,57 @@
 package session
 
 import (
-	"./structs"
+	"../core/helpers"
+	CoreServices "../core/services"
+	"../session/services"
+	SessionDTO "../session/structs"
 	"encoding/json"
-	"fmt"
+	"encoding/xml"
 	"github.com/gorilla/mux"
-	"github.com/satori/go.uuid"
-	"log"
 	"net/http"
 )
 
 func CreateSessionHandler(w http.ResponseWriter, r *http.Request) {
-	id, err := uuid.NewV4()
-	if err != nil {
-		log.Fatal(err)
-	}
+	sessionService := services.NewSessionService()
+	userService := CoreServices.NewUserService()
 
-	boardId, err := uuid.NewV4()
-	if err != nil {
-		log.Fatal(err)
-	}
+	identifier := r.Header.Get("X-USER-IDENTIFIER")
+	user := userService.FindByUUID(identifier)
 
-	session := structs.SessionOutDTO{UUID:id, Board:boardId}
+	createSessionDTO := SessionDTO.CreateSessionDTO{Player1: *user}
 
-	w.Header().Set("Content-Type", "application/json")
-	b, err := json.Marshal(session)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	w.Write(b)
+	session := sessionService.CreateSession(createSessionDTO)
+	w.Header().Set("Content-Type", r.Header.Get("Accept"))
+	w.Write(transformDTOToSchema(session, r.Header.Get("Accept")))
 	w.WriteHeader(http.StatusOK)
 }
 
 func JoinSessionHandler(w http.ResponseWriter, r *http.Request) {
-	id, err := uuid.NewV4()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte("{\"uuid\": \"" + id.String() + "\"}"))
-	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", r.Header.Get("Accept"))
+	// todo - build out the logic for joining sessions
+	w.WriteHeader(http.StatusAccepted)
 }
 
 func ViewSessionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte("{\"uuid\": \"" + vars["session"] + "\"}"))
+	sessionService := services.NewSessionService()
+	sessionOut := sessionService.FindSessionByUUID(vars["session"])
+	body := transformDTOToSchema(sessionOut, r.Header.Get("Accept"))
+
+	w.Header().Set("Content-Type", r.Header.Get("Accept"))
+	w.Write(body)
 	w.WriteHeader(http.StatusOK)
+}
+
+func transformDTOToSchema(dto SessionDTO.SessionOutDTO, output string) []byte {
+	if output == "application/json" {
+		b, err := json.Marshal(dto)
+		helpers.HandleError(err)
+		return b
+	}
+
+	b, err := xml.MarshalIndent(dto, "  ", "    ")
+	helpers.HandleError(err)
+
+	return []byte(xml.Header + string(b))
 }
