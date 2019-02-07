@@ -24,17 +24,16 @@ func NewSessionService() *SessionService {
 	}
 }
 
-func (service SessionService) CreateSession() SessionDTO.SessionOutDTO {
+func (service SessionService) CreateSession(dto SessionDTO.CreateSessionDTO) SessionDTO.SessionOutDTO {
 	db := dbal.InitialiseConnection()
 
 	board := BoardModels.BoardModel{}
 	board.XLength = 10
 	board.YLength = board.XLength
-	db.Create(&board)
 
-	session := service.Model.Fresh()
-	session.Board = board
+	//user := dto.Player1
 
+	session := model.SessionModel{Board: board}
 	db.Create(&session)
 
 	sessionOutDTO := SessionDTO.SessionOutDTO{}

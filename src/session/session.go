@@ -2,6 +2,7 @@ package session
 
 import (
 	"../core/helpers"
+	CoreServices "../core/services"
 	"../session/services"
 	SessionDTO "../session/structs"
 	"encoding/json"
@@ -12,7 +13,14 @@ import (
 
 func CreateSessionHandler(w http.ResponseWriter, r *http.Request) {
 	sessionService := services.NewSessionService()
-	session := sessionService.CreateSession()
+	userService := CoreServices.NewUserService()
+
+	identifier := r.Header.Get("X-USER-IDENTIFIER")
+	user := userService.FindByUUID(identifier)
+
+	createSessionDTO := SessionDTO.CreateSessionDTO{Player1: *user}
+
+	session := sessionService.CreateSession(createSessionDTO)
 	w.Header().Set("Content-Type", r.Header.Get("Accept"))
 	w.Write(transformDTOToSchema(session, r.Header.Get("Accept")))
 	w.WriteHeader(http.StatusOK)
