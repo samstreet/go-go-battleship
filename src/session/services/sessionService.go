@@ -2,7 +2,9 @@ package services
 
 import (
 	BoardModels "../../board/model"
+	CoreModels "../../core/model"
 	BoardDTO "../../board/structs"
+	CoreDTO "../../core/structs"
 	"../../core/dbal"
 	CoreServices "../../core/services"
 	"../model"
@@ -31,13 +33,15 @@ func (service SessionService) CreateSession(dto SessionDTO.CreateSessionDTO) Ses
 	board.XLength = 10
 	board.YLength = board.XLength
 
-	//user := dto.Player1
+	user := dto.Player1
 
-	session := model.SessionModel{Board: board}
-	db.Create(&session)
+	session := model.SessionModel{Board: board, Players: []CoreModels.User{user}}
+	db.Save(&session)
 
 	sessionOutDTO := SessionDTO.SessionOutDTO{}
-	boardOutDTO := BoardDTO.BoardOutDTO{UUID: u.FromStringOrNil(session.Board.ID)}
+	boardOutDTO := BoardDTO.BoardOutDTO{UUID: u.FromStringOrNil(session.Board.ID), Players:[]CoreDTO.UserOutDTO{
+		{UUID:user.GetID()},
+	},}
 	boardOutDTO.XLength = board.XLength
 	boardOutDTO.YLength = board.YLength
 

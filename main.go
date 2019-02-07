@@ -20,9 +20,16 @@ import (
 func init() {
 	err := godotenv.Load()
 	helpers.HandleError(err)
-	dbal.InitialiseConnection().AutoMigrate(&CoreModels.User{})
-	dbal.InitialiseConnection().AutoMigrate(&BoardModels.BoardModel{})
-	dbal.InitialiseConnection().AutoMigrate(&SessionModels.SessionModel{})
+
+	db := dbal.InitialiseConnection()
+	db.DropTableIfExists(&CoreModels.User{}, &BoardModels.BoardModel{}, &SessionModels.SessionModel{})
+	db.AutoMigrate(&CoreModels.User{}, &BoardModels.BoardModel{}, &SessionModels.SessionModel{})
+	db.Model(&CoreModels.User{}).AddForeignKey("session_id", "session(id)", "RESTRICT", "RESTRICT")
+
+	defaultUser := CoreModels.User{ID: "34c77f05-0306-49d4-aa0b-a35fe01a8b18"}
+	db.Create(&defaultUser)
+	defaultUser2 := CoreModels.User{ID: "56cc1ed2-aeb7-446c-b03a-32385156d54e"}
+	db.Create(&defaultUser2)
 }
 
 func main() {

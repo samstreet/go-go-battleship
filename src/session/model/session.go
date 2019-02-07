@@ -7,7 +7,6 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/satori/go.uuid"
-	"log"
 	"time"
 )
 
@@ -17,7 +16,7 @@ type SessionModel struct {
 	UpdatedAt  time.Time
 	Board      model.BoardModel `gorm:"foreignkey:BoardID"`
 	BoardID    string
-	Players    []CoreModels.User
+	Players    []CoreModels.User `gorm:"ForeignKey:SessionID"`
 	Connection *gorm.DB
 }
 
@@ -31,6 +30,6 @@ func (session *SessionModel) Fresh() *SessionModel {
 
 func (session *SessionModel) BeforeCreate(scope *gorm.Scope) error {
 	id, _ := uuid.NewV4()
-	log.Fatal(scope.SetColumn("ID", id.String()))
+	scope.SetColumn("ID", id.String())
 	return nil
 }
