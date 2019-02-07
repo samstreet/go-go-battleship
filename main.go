@@ -5,6 +5,7 @@ import (
 	BoardModels "./src/board/model"
 	"./src/core/dbal"
 	"./src/core/helpers"
+	CoreModels "./src/core/model"
 	"./src/core/web/middleware"
 	"./src/session"
 	SessionModels "./src/session/model"
@@ -19,6 +20,7 @@ import (
 func init() {
 	err := godotenv.Load()
 	helpers.HandleError(err)
+	dbal.InitialiseConnection().AutoMigrate(&CoreModels.User{})
 	dbal.InitialiseConnection().AutoMigrate(&BoardModels.BoardModel{})
 	dbal.InitialiseConnection().AutoMigrate(&SessionModels.SessionModel{})
 }
@@ -30,7 +32,8 @@ func main() {
 	sessionRouter := router.PathPrefix("/session").Subrouter()
 	sessionRouter.HandleFunc("", session.CreateSessionHandler).Methods(http.MethodOptions, http.MethodPost)
 	sessionRouter.HandleFunc("/join/{session}", session.JoinSessionHandler).Methods(http.MethodOptions, http.MethodPut)
-	sessionRouter.HandleFunc("/{session}", session.ViewSessionHandler).Methods(http.MethodOptions, http.MethodGet)
+	sessionRouter.HandleFunc("/{session}", session.ViewSessionHandler).Methods(http.MethodOptions, http.MethodGet, http.MethodHead)
+	sessionRouter.Methods(http.MethodHead)
 	sessionRouter.Use(middleware.HeaderUserTokenValidator, middleware.HeaderValidUserToken)
 
 	boardRouter := router.PathPrefix("/board").Subrouter()

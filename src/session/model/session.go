@@ -4,6 +4,7 @@ import (
 	"../../board/model"
 	"../../core/dbal"
 	"../../core/helpers"
+	CoreModels "../../core/model"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/satori/go.uuid"
@@ -16,6 +17,7 @@ type SessionModel struct {
 	UpdatedAt  time.Time
 	Board      model.BoardModel `gorm:"foreignkey:BoardID"`
 	BoardID    string
+	Users      []CoreModels.User
 	Connection *gorm.DB
 }
 

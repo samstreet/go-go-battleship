@@ -4,20 +4,23 @@ import (
 	BoardModels "../../board/model"
 	BoardDTO "../../board/structs"
 	"../../core/dbal"
+	CoreServices "../../core/services"
 	"../model"
 	SessionDTO "../structs"
 	u "github.com/satori/go.uuid"
 )
 
 type SessionService struct {
-	Model model.SessionModel
+	Model       model.SessionModel
+	UserService CoreServices.UserService
 }
 
 func NewSessionService() *SessionService {
 	m := model.SessionModel{}
 
 	return &SessionService{
-		Model: *m.Fresh(),
+		Model:       *m.Fresh(),
+		UserService: *CoreServices.NewUserService(),
 	}
 }
 
@@ -56,4 +59,13 @@ func (service SessionService) FindSessionByUUID(uuid string) SessionDTO.SessionO
 	boardOutDTO.YLength = tmp.Board.YLength
 
 	return SessionDTO.SessionOutDTO{UUID: u.FromStringOrNil(tmp.ID), Board: boardOutDTO}
+}
+
+func (service SessionService) JoinSession(request SessionDTO.JoinSessionDTO) SessionDTO.JoinSessionDTO {
+	return request
+}
+
+func (service SessionService) attachUserToSession(session u.UUID, playerKey u.UUID) bool {
+	//user := service.UserService.findByUUID(playerKey)
+	return true
 }

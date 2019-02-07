@@ -28,8 +28,10 @@ func ViewSessionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	sessionService := services.NewSessionService()
 	sessionOut := sessionService.FindSessionByUUID(vars["session"])
+	body := transformDTOToSchema(sessionOut, r.Header.Get("Accept"))
+
 	w.Header().Set("Content-Type", r.Header.Get("Accept"))
-	w.Write(transformDTOToSchema(sessionOut, r.Header.Get("Accept")))
+	w.Write(body)
 	w.WriteHeader(http.StatusOK)
 }
 
