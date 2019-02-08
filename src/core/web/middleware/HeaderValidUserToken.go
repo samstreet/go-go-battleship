@@ -1,18 +1,23 @@
 package middleware
 
 import (
+	UserServices "../../services"
 	"net/http"
 )
 
 func HeaderValidUserToken(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		h.ServeHTTP(w, r)
-		return
+		identifier := r.Header.Get("X-USER-IDENTIFIER")
+		userService := UserServices.NewUserService()
+		_, err := userService.FindByUUID(identifier)
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("{\"error\": \"Invalid X-USER-IDENTIFIER\"}"))
-		return
+		if err != nil {
+			w.Header().Set("Content-Type", r.Header.Get("Accept"))
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		h.ServeHTTP(w, r)
 	})
 }
