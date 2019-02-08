@@ -16,7 +16,7 @@ func CreateSessionHandler(w http.ResponseWriter, r *http.Request) {
 	userService := CoreServices.NewUserService()
 
 	identifier := r.Header.Get("X-USER-IDENTIFIER")
-	user := userService.FindByUUID(identifier)
+	user, _ := userService.FindByUUID(identifier)
 
 	createSessionDTO := SessionDTO.CreateSessionDTO{Player1: *user}
 
