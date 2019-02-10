@@ -34,14 +34,20 @@ func init() {
 
 func main() {
 	router := mux.NewRouter()
-	router.Use(middleware.RateLimit, middleware.AcceptableContentTypes)
+	router.Use(
+		middleware.RateLimit,
+		middleware.AcceptableContentTypes,
+	)
 
 	sessionRouter := router.PathPrefix("/session").Subrouter()
 	sessionRouter.HandleFunc("", session.CreateSessionHandler).Methods(http.MethodOptions, http.MethodPost)
 	sessionRouter.HandleFunc("/join/{session}", session.JoinSessionHandler).Methods(http.MethodOptions, http.MethodPut)
 	sessionRouter.HandleFunc("/{session}", session.ViewSessionHandler).Methods(http.MethodOptions, http.MethodGet, http.MethodHead)
 	sessionRouter.Methods(http.MethodHead)
-	sessionRouter.Use(middleware.HasUserTokenIdentifierHeader, middleware.HeaderValidUserToken)
+	sessionRouter.Use(
+		middleware.HasUserTokenIdentifierHeader,
+		middleware.HeaderValidUserToken,
+	)
 
 	boardRouter := router.PathPrefix("/board").Subrouter()
 	boardRouter.HandleFunc("", board.CreateBoardHandler).Methods(http.MethodOptions, http.MethodPost)

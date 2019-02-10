@@ -12,6 +12,7 @@ type User struct {
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 	SessionID  string
+	PlayerRole int
 	Connection *gorm.DB
 }
 

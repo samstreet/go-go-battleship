@@ -9,7 +9,7 @@ import (
 type BoardOutDTO struct {
 	XMLName xml.Name             `xml:"Board" json:"-"`
 	UUID    uuid.UUID            `xml:"UUID" json:"uuid"`
-	XLength int                  `xml:"XLength" json:"xLength"`
-	YLength int                  `xml:"YLength" json:"yLength"`
+	XLength int                  `xml:"XLength,attr" json:"xLength"`
+	YLength int                  `xml:"YLength,attr" json:"yLength"`
 	Players []structs.UserOutDTO `xml:"Players>Player" json:"players"`
 }

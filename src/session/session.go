@@ -27,8 +27,19 @@ func CreateSessionHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func JoinSessionHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	sessionService := services.NewSessionService()
+	userService := CoreServices.NewUserService()
+
+	session := sessionService.FindSessionByUUID(vars["session"])
+
+	identifier := r.Header.Get("X-USER-IDENTIFIER")
+	player2, _ := userService.FindByUUID(identifier)
+
+	joinSession := SessionDTO.JoinSessionDTO{UUID:session.UUID, Player2:player2.GetID()}
+	sessionService.JoinSession(joinSession)
+
 	w.Header().Set("Content-Type", r.Header.Get("Accept"))
-	// todo - build out the logic for joining sessions
 	w.WriteHeader(http.StatusAccepted)
 }
 
@@ -43,7 +54,7 @@ func ViewSessionHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func transformDTOToSchema(dto SessionDTO.SessionOutDTO, output string) []byte {
+func transformDTOToSchema(dto interface{}, output string) []byte {
 	if output == "application/json" {
 		b, err := json.Marshal(dto)
 		helpers.HandleError(err)
