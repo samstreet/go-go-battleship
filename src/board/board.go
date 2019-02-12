@@ -1,9 +1,7 @@
 package board
 
 import (
-	"../board/model"
 	"../board/structs"
-	"../core/dbal"
 	"encoding/json"
 	"fmt"
 	"github.com/satori/go.uuid"
@@ -11,14 +9,13 @@ import (
 	"net/http"
 )
 
-func CreateBoardHandler(w http.ResponseWriter, r *http.Request) {
-	var DB = dbal.InitialiseConnection()
-	DB.Create(&model.BoardModel{})
+func UpdateBoardHandler(w http.ResponseWriter, r *http.Request) {
+	id, err := uuid.NewV4()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	var boardModel model.BoardModel
-	DB.First(&boardModel, 1)
-
-	session := structs.BoardOutDTO{UUID: uuid.FromStringOrNil(boardModel.ID)}
+	session := structs.BoardOutDTO{UUID: id}
 
 	w.Header().Set("Content-Type", "application/json")
 	b, err := json.Marshal(session)
@@ -31,7 +28,7 @@ func CreateBoardHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func UpdateBoardHandler(w http.ResponseWriter, r *http.Request) {
+func SetBoardPieces(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.NewV4()
 	if err != nil {
 		log.Fatal(err)
