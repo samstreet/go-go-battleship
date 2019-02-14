@@ -22,4 +22,5 @@ deps:
 	$(GOGET) github.com/rs/cors
 	$(GOGET) github.com/satori/go.uuid
 	$(GOGET) github.com/mattn/go-sqlite3
+	$(GOGET) github.com/xeipuuv/gojsonschema
 	$(GOGET) golang.org/x/time/rate

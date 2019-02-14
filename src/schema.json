@@ -1,0 +1,53 @@
+{
+  "definitions": {},
+  "$schema": "",
+  "$id": "http://example.com/root.json",
+  "type": "array",
+  "title": "The Root Schema",
+  "default": null,
+  "maxItems": 5,
+  "minItems": 1,
+  "uniqueItems": true,
+  "items": {
+    "$id": "#/items",
+    "type": "object",
+    "title": "The Items Schema",
+    "required": [
+      "start",
+      "finish",
+      "ship"
+    ],
+    "properties": {
+      "start": {
+        "$id": "#/items/properties/start",
+        "type": "string",
+        "title": "The Start Schema",
+        "default": "",
+        "examples": [
+          "A1"
+        ],
+        "pattern": "^(.*)$"
+      },
+      "finish": {
+        "$id": "#/items/properties/finish",
+        "type": "string",
+        "title": "The Finish Schema",
+        "default": "",
+        "examples": [
+          "A1"
+        ],
+        "pattern": "^(.*)$"
+      },
+      "ship": {
+        "$id": "#/items/properties/ship",
+        "type": "string",
+        "title": "The Ship Schema",
+        "default": "",
+        "examples": [
+          "ba864ff8-38ea-4de4-9f3b-83a467113d21"
+        ],
+        "pattern": "^(.*)$"
+      }
+    }
+  }
+}

@@ -9,14 +9,19 @@ import (
 )
 
 type BoardPiece struct {
-	ID        string `sql:"index"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt *time.Time `sql:"index"`
-	Board     BoardModel `gorm:"foreignkey:BoardID"`
-	BoardID   string     `sql:"index"`
-	User      User `gorm:"foreignkey:UserID"`
-	UserID    string     `sql:"index"`
+	ID          string `sql:"index"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   *time.Time `sql:"index"`
+	Board       BoardModel `gorm:"foreignkey:BoardID"`
+	BoardID     string     `sql:"index"`
+	User        User       `gorm:"foreignkey:UserID"`
+	UserID      string     `sql:"index"`
+	Ship        ShipModel  `gorm:"foreignkey:ShipID"`
+	ShipID      string     `sql:"index"`
+	Start       string
+	Finish      string
+	CurrentHits int
 }
 
 func (board *BoardPiece) BeforeCreate(scope *gorm.Scope) error {

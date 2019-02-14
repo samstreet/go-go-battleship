@@ -5,8 +5,6 @@ import (
 	. "../core/services"
 	. "../session/services"
 	. "../session/structs"
-	"encoding/json"
-	"encoding/xml"
 	"github.com/gorilla/mux"
 	"net/http"
 )
@@ -22,7 +20,7 @@ func CreateSessionHandler(w http.ResponseWriter, r *http.Request) {
 
 	session := sessionService.CreateSession(createSessionDTO)
 	w.Header().Set("Content-Type", r.Header.Get("Accept"))
-	w.Write(transformDTOToSchema(session, r.Header.Get("Accept")))
+	w.Write(TransformDTOToSchema(session, r.Header.Get("Accept")))
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -47,22 +45,10 @@ func ViewSessionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	sessionService := NewSessionService()
 	sessionOut := sessionService.FindSessionByUUID(vars["session"])
-	body := transformDTOToSchema(sessionOut, r.Header.Get("Accept"))
+	body := TransformDTOToSchema(sessionOut, r.Header.Get("Accept"))
 
 	w.Header().Set("Content-Type", r.Header.Get("Accept"))
 	w.Write(body)
 	w.WriteHeader(http.StatusOK)
 }
 
-func transformDTOToSchema(dto interface{}, output string) []byte {
-	if output == "application/json" {
-		b, err := json.Marshal(dto)
-		HandleError(err)
-		return b
-	}
-
-	b, err := xml.MarshalIndent(dto, "  ", "    ")
-	HandleError(err)
-
-	return []byte(xml.Header + string(b))
-}

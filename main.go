@@ -6,12 +6,11 @@ import (
 	. "./src/core/dbal"
 	. "./src/core/helpers"
 	. "./src/core/model"
-	middleware "./src/core/web/middleware"
+	. "./src/core/web/middleware"
 	"./src/session"
 	. "./src/session/model"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	"github.com/rs/cors"
 	"log"
 	"net/http"
 	"os"
@@ -47,31 +46,29 @@ func init() {
 func main() {
 	router := mux.NewRouter()
 	router.Use(
-		middleware.RateLimit,
-		middleware.AcceptableContentTypes,
+		RateLimit,
+		AcceptableContentTypes,
 	)
 
 	sessionRouter := router.PathPrefix("/session").Subrouter()
-	sessionRouter.HandleFunc("", session.CreateSessionHandler).Methods(http.MethodOptions, http.MethodPost)
-	sessionRouter.HandleFunc("/join/{session}", session.JoinSessionHandler).Methods(http.MethodOptions, http.MethodPut)
-	sessionRouter.HandleFunc("/{session}", session.ViewSessionHandler).Methods(http.MethodOptions, http.MethodGet, http.MethodHead)
+	sessionRouter.HandleFunc("", session.CreateSessionHandler).Methods(http.MethodOptions, http.MethodPost).Name("battleships.session.create")
+	sessionRouter.HandleFunc("/join/{session}", session.JoinSessionHandler).Methods(http.MethodOptions, http.MethodPut).Name("battleships.session.join")
+	sessionRouter.HandleFunc("/{session}", session.ViewSessionHandler).Methods(http.MethodOptions, http.MethodGet, http.MethodHead).Name("battleships.session.view")
 	sessionRouter.Methods(http.MethodHead)
 	sessionRouter.Use(
-		middleware.HasUserTokenIdentifierHeader,
-		middleware.HeaderValidUserToken,
+		HasUserTokenIdentifierHeader,
+		HeaderValidUserToken,
 	)
 
 	boardRouter := router.PathPrefix("/board").Subrouter()
-	boardRouter.HandleFunc("/{uuid}/move", board.UpdateBoardHandler).Methods(http.MethodOptions, http.MethodPut)
-	boardRouter.HandleFunc("/{uuid}/pieces", board.SetBoardPieces).Methods(http.MethodOptions, http.MethodPost)
+	boardRouter.HandleFunc("/{uuid}/move", board.UpdateBoardHandler).Methods(http.MethodOptions, http.MethodPut).Name("battleships.board.move")
+	boardRouter.Handle("/{uuid}/pieces", SchemaValidator(http.HandlerFunc(board.SetBoardPieces))).Methods(http.MethodOptions, http.MethodPost).Name("battleships.board.pieces")
 	boardRouter.Use(
-		middleware.HasUserTokenIdentifierHeader,
-		middleware.HeaderValidUserToken,
-		middleware.BoardExists,
-		middleware.UserIsAttachedToBoard,
+		HasUserTokenIdentifierHeader,
+		HeaderValidUserToken,
+		BoardExists,
+		UserIsAttachedToBoard,
 	)
 
-	handler := cors.Default().Handler(router)
-
-	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), handler))
+	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
 }
