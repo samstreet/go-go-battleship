@@ -1,19 +1,19 @@
-package services
+package board
 
 import (
-	"../model"
+	. "../model"
 	"errors"
 )
 
 type BoardService struct {
-	Model model.BoardModel
+	Model BoardModel
 }
 
-func NewBoardService(model model.BoardModel) *BoardService {
+func NewBoardService(model BoardModel) *BoardService {
 	return &BoardService{Model: *model.Fresh()}
 }
 
-func (service BoardService) FindByUUID(uuid string) (Board *model.BoardModel, err error) {
+func (service BoardService) FindByUUID(uuid string) (Board *BoardModel, err error) {
 	Board = service.Model.Fresh()
 
 	service.Model.Connection.Where("id = ?", uuid).Find(&Board)

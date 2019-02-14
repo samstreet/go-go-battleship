@@ -1,8 +1,8 @@
-package model
+package board
 
 import (
-	"../../core/dbal"
-	"../../core/helpers"
+	. "../../core/dbal"
+	. "../../core/helpers"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/satori/go.uuid"
@@ -25,12 +25,12 @@ func NewBoardModel(connection *gorm.DB) *BoardModel {
 }
 
 func (board *BoardModel) Fresh() *BoardModel {
-	return NewBoardModel(dbal.InitialiseConnection())
+	return NewBoardModel(InitialiseConnection())
 }
 
 func (board *BoardModel) BeforeCreate(scope *gorm.Scope) error {
 	id, err := uuid.NewV4()
-	helpers.HandleError(err)
+	HandleError(err)
 
 	scope.SetColumn("ID", id.String())
 	return nil

@@ -2,13 +2,13 @@ package main
 
 import (
 	"./src/board"
-	BoardModels "./src/board/model"
-	"./src/core/dbal"
-	"./src/core/helpers"
-	CoreModels "./src/core/model"
-	"./src/core/web/middleware"
+	. "./src/board/model"
+	. "./src/core/dbal"
+	. "./src/core/helpers"
+	. "./src/core/model"
+	middleware "./src/core/web/middleware"
 	"./src/session"
-	SessionModels "./src/session/model"
+	. "./src/session/model"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/rs/cors"
@@ -19,23 +19,23 @@ import (
 
 func init() {
 	err := godotenv.Load()
-	helpers.HandleError(err)
+	HandleError(err)
 
-	db := dbal.InitialiseConnection()
-	db.DropTableIfExists(&CoreModels.User{}, &BoardModels.BoardModel{}, &SessionModels.SessionModel{}, &BoardModels.BoardPiece{}, &BoardModels.ShipModel{})
-	db.AutoMigrate(&CoreModels.User{}, &BoardModels.BoardModel{}, &SessionModels.SessionModel{}, &BoardModels.BoardPiece{}, &BoardModels.ShipModel{})
-	db.Model(&CoreModels.User{}).AddForeignKey("session_id", "session(id)", "RESTRICT", "RESTRICT")
+	db := InitialiseConnection()
+	db.DropTableIfExists(&User{}, &BoardModel{}, &SessionModel{}, &BoardPiece{}, &ShipModel{})
+	db.AutoMigrate(&User{}, &BoardModel{}, &SessionModel{}, &BoardPiece{}, &ShipModel{})
+	db.Model(&User{}).AddForeignKey("session_id", "session(id)", "RESTRICT", "RESTRICT")
 
-	defaultUser := CoreModels.User{ID: "34c77f05-0306-49d4-aa0b-a35fe01a8b18"}
+	defaultUser := User{ID: "34c77f05-0306-49d4-aa0b-a35fe01a8b18"}
 	db.Create(&defaultUser)
-	defaultUser2 := CoreModels.User{ID: "56cc1ed2-aeb7-446c-b03a-32385156d54e"}
+	defaultUser2 := User{ID: "56cc1ed2-aeb7-446c-b03a-32385156d54e"}
 	db.Create(&defaultUser2)
 
-	carrier := BoardModels.ShipModel{Name: "Carrier", Length: 5}
-	battleship := BoardModels.ShipModel{Name: "Battleship", Length: 4}
-	cruiser := BoardModels.ShipModel{Name: "Cruiser", Length: 3}
-	submarine := BoardModels.ShipModel{Name: "Submarine", Length: 3}
-	destroyer := BoardModels.ShipModel{Name: "Destroyer", Length: 2}
+	carrier := ShipModel{Name: "Carrier", Length: 5}
+	battleship := ShipModel{Name: "Battleship", Length: 4}
+	cruiser := ShipModel{Name: "Cruiser", Length: 3}
+	submarine := ShipModel{Name: "Submarine", Length: 3}
+	destroyer := ShipModel{Name: "Destroyer", Length: 2}
 
 	db.Create(&carrier)
 	db.Create(&battleship)

@@ -1,7 +1,7 @@
-package model
+package core
 
 import (
-	"../dbal"
+	. "../dbal"
 	"github.com/jinzhu/gorm"
 	"github.com/satori/go.uuid"
 	"time"
@@ -17,7 +17,7 @@ type User struct {
 }
 
 func (user User) NewUser() *User {
-	return &User{Connection: dbal.InitialiseConnection()}
+	return &User{Connection: InitialiseConnection()}
 }
 
 func (user *User) Fresh() *User {

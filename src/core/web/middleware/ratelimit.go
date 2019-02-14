@@ -1,4 +1,4 @@
-package middleware
+package core
 
 import (
 	"golang.org/x/time/rate"

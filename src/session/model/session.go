@@ -1,9 +1,9 @@
-package model
+package session
 
 import (
-	"../../board/model"
-	"../../core/dbal"
-	CoreModels "../../core/model"
+	. "../../board/model"
+	. "../../core/dbal"
+	. "../../core/model"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/satori/go.uuid"
@@ -14,14 +14,14 @@ type SessionModel struct {
 	ID         string
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
-	Board      model.BoardModel `gorm:"foreignkey:BoardID"`
+	Board      BoardModel `gorm:"foreignkey:BoardID"`
 	BoardID    string
-	Players    []CoreModels.User `gorm:"ForeignKey:SessionID"`
+	Players    []User `gorm:"ForeignKey:SessionID"`
 	Connection *gorm.DB
 }
 
 func (session *SessionModel) NewSessionModel() *SessionModel {
-	return &SessionModel{Connection: dbal.InitialiseConnection()}
+	return &SessionModel{Connection: InitialiseConnection()}
 }
 
 func (session *SessionModel) Fresh() *SessionModel {

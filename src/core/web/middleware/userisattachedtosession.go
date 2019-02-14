@@ -1,8 +1,8 @@
-package middleware
+package core
 
 import (
-	SessionServices "../../../session/services"
-	UserServices "../../services"
+	. "../../../session/services"
+	. "../../services"
 	"github.com/gorilla/mux"
 	"net/http"
 )
@@ -13,10 +13,10 @@ func UserIsAttachedToBoard(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		board := vars["uuid"]
 
-		userService := UserServices.NewUserService()
+		userService := NewUserService()
 
 		user, _ := userService.FindByUUID(identifier)
-		session := SessionServices.NewSessionService().FindSessionByUUID(user.SessionID)
+		session := NewSessionService().FindSessionByUUID(user.SessionID)
 
 		if session.Board.UUID.String() != board {
 			w.Header().Set("Content-Type", r.Header.Get("Accept"))

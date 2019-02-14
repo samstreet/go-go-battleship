@@ -1,12 +1,12 @@
-package dbal
+package core
 
 import (
-	"../helpers"
+	. "../helpers"
 	"github.com/jinzhu/gorm"
 )
 
 func InitialiseConnection() *gorm.DB {
 	DB, err := gorm.Open("sqlite3", "test.db")
-	helpers.HandleError(err)
+	HandleError(err)
 	return DB
 }

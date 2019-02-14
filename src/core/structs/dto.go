@@ -1,4 +1,4 @@
-package structs
+package core
 
 import "github.com/satori/go.uuid"
 

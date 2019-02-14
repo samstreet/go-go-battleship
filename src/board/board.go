@@ -1,7 +1,7 @@
 package board
 
 import (
-	"../board/structs"
+	. "../board/structs"
 	"encoding/json"
 	"fmt"
 	"github.com/satori/go.uuid"
@@ -15,7 +15,7 @@ func UpdateBoardHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	session := structs.BoardOutDTO{UUID: id}
+	session := BoardOutDTO{UUID: id}
 
 	w.Header().Set("Content-Type", "application/json")
 	b, err := json.Marshal(session)
@@ -34,7 +34,7 @@ func SetBoardPieces(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	session := structs.BoardOutDTO{UUID: id}
+	session := BoardOutDTO{UUID: id}
 
 	w.Header().Set("Content-Type", "application/json")
 	b, err := json.Marshal(session)

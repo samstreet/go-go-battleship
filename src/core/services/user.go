@@ -1,20 +1,20 @@
 package services
 
 import (
-	"../model"
+	. "../model"
 	"errors"
 )
 
 type UserService struct {
-	Model model.User
+	Model User
 }
 
 func NewUserService() *UserService {
-	m := model.User{}
+	m := User{}
 	return &UserService{Model: *m.Fresh()}
 }
 
-func (service UserService) FindByUUID(uuid string) (user *model.User, err error)  {
+func (service UserService) FindByUUID(uuid string) (user *User, err error)  {
 	user = service.Model.Fresh()
 	service.Model.Connection.Where("id = ?", uuid).First(&user)
 	if user.ID == ""{

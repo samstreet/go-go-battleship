@@ -1,7 +1,7 @@
-package model
+package board
 
 import (
-	"../../core/helpers"
+	. "../../core/helpers"
 	"github.com/jinzhu/gorm"
 	"github.com/satori/go.uuid"
 )
@@ -14,7 +14,7 @@ type ShipModel struct {
 
 func (board *ShipModel) BeforeCreate(scope *gorm.Scope) error {
 	id, err := uuid.NewV4()
-	helpers.HandleError(err)
+	HandleError(err)
 
 	scope.SetColumn("ID", id.String())
 	return nil

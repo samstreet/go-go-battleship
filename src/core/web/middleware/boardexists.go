@@ -1,4 +1,4 @@
-package middleware
+package core
 
 import (
 	BoardModels "../../../board/model"
@@ -16,6 +16,8 @@ func BoardExists(next http.Handler) http.Handler {
 
 		if error != nil {
 			w.Header().Set("Content-Type", r.Header.Get("Accept"))
+			body := ErrorResponse{Message: error.Error()}
+			w.Write(ErrorToSchema(body, r.Header.Get("Accept")))
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}

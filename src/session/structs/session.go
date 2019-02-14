@@ -1,20 +1,20 @@
-package structs
+package session
 
 import (
-	"../../core/model"
+	. "../../board/structs"
+	. "../../core/model"
 	"encoding/xml"
 	"github.com/satori/go.uuid"
 )
-import "../../board/structs"
 
 type SessionOutDTO struct {
-	XMLName xml.Name            `xml:"Session" json:"-"`
-	UUID    uuid.UUID           `xml:"UUID" json:"uuid"`
-	Board   structs.BoardOutDTO `xml:"Board" json:"board"`
+	XMLName xml.Name    `xml:"Session" json:"-"`
+	UUID    uuid.UUID   `xml:"UUID" json:"uuid"`
+	Board   BoardOutDTO `xml:"Board" json:"board"`
 }
 
 type CreateSessionDTO struct {
-	Player1 model.User `xml:"Player1" json:"player1>uuid"`
+	Player1 User `xml:"Player1" json:"player1>uuid"`
 }
 
 type JoinSessionDTO struct {
